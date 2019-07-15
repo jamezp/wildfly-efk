@@ -1,0 +1,37 @@
+= WildFly EFK Stack Testing
+
+A simple docker-compose configuration for testing WildFly with the EFK stack.
+
+== Starting
+
+To simply just start without changes you can execute the following command:
+
+----
+docker-compose up
+----
+
+If you're making changes adding the `--build` argument will rebuild the `wildfly` and `fluentd` images.
+
+----
+docker-compose up --build
+----
+
+=== Accessing
+
+WildFly: http://localhost:8080
+
+Kibana: http://localhost:5601
+
+== Stopping
+
+To stop, remove the storage and the locally built images:
+
+----
+docker-compose down --volumes --rmi local
+----
+
+To simply just bring down the running images:
+
+----
+docker-compose down
+----
