@@ -22,6 +22,41 @@ WildFly: http://localhost:8080
 
 Kibana: http://localhost:5601
 
+=== Using a custom local build
+
+The `local-compose.sh` allows you to compose an image created from a local version of WildFly. This is useful for
+developing new features which write to `stdout`.
+
+You first need to ensure you build WildFly with the `-Prelease` profile enabled.
+
+----
+mvn clean install -DskipTests -Prelease -Pjboss-release -Dcheckstyle.skip=true -Denforcer.skip=true
+----
+
+If you've recently built and installed the module you're working on you can just run the command from the `dist`
+directory or run:
+
+----
+mvn clean install -pl dist -DskipTests -Prelease -Pjboss-release -Dcheckstyle.skip=true -Denforcer.skip=true
+----
+
+The simple form of the command is to just specify the version and it will attempt to copy the distribution from your
+local maven repository.
+
+----
+./local-compose.sh -v 18.0.0.Beta1-SNAPSHOT -r
+----
+
+To specify your project directory you can use the `-p` argument to specify the relative path to your wildfly git clone.
+
+----
+./local-compose.sh -v 18.0.0.Beta1-SNAPSHOT -p ${HOME}/projects/wildfly -r
+----
+
+The `-r` argument is optional and if left will just build the docker images and require `docker-compose up` to be
+executed.
+
+
 == Stopping
 
 To stop, remove the storage and the locally built images:

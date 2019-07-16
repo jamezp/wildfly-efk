@@ -1,4 +1,26 @@
-FROM jboss/wildfly:17.0.1.Final
+# Use latest jboss/base-jdk:11 image as the base
+FROM jboss/base-jdk:11
+
+# Set the WILDFLY_VERSION env variable
+ARG WILDFLY_VERSION
+ENV WILDFLY_VERSION=${WILDFLY_VERSION:-17.0.1.Final}
+ARG WILDFLY_PATH
+ENV WILDFLY_PATH=${WILDFLY_PATH}
+ENV JBOSS_HOME /opt/jboss/wildfly
+
+USER root
+# Add the WildFly distribution to /opt, and make wildfly the owner of the extracted tar content
+# Make sure the distribution is available from a well-known place
+ADD $WILDFLY_PATH ./
+RUN cd $HOME \
+    && mv /opt/jboss/wildfly-$WILDFLY_VERSION $JBOSS_HOME \
+    && chown -R jboss:0 ${JBOSS_HOME} \
+    && chmod -R g+rw ${JBOSS_HOME}
+
+# Ensure signals are forwarded to the JVM process correctly for graceful shutdown
+ENV LAUNCH_JBOSS_IN_BACKGROUND true
+
+USER jboss
 
 RUN /opt/jboss/wildfly/bin/add-user.sh admin-user test.12345 --silent
 

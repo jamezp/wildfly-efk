@@ -1,0 +1,3 @@
+# Ignore the copied in WildFly
+wildfly/wildfly-dist*.tar.gz
+wildfly/wildfly-dist*.zip
