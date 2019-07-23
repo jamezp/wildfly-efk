@@ -13,7 +13,7 @@ USER root
 # Make sure the distribution is available from a well-known place
 ADD $WILDFLY_PATH ./
 RUN cd $HOME \
-    && mv /opt/jboss/wildfly-$WILDFLY_VERSION $JBOSS_HOME \
+    && mv $(find /opt/jboss  -name "*$WILDFLY_VERSION" -type d -maxdepth 1) $JBOSS_HOME \
     && chown -R jboss:0 ${JBOSS_HOME} \
     && chmod -R g+rw ${JBOSS_HOME}
 
@@ -25,7 +25,8 @@ USER jboss
 RUN /opt/jboss/wildfly/bin/add-user.sh admin-user test.12345 --silent
 
 # Configure JSON logging
-ADD standalone.xml /opt/jboss/wildfly/standalone/configuration/standalone-docker.xml
+ADD logging.properties /opt/jboss/wildfly/standalone/configuration/logging.properties
+ADD setup.cli /opt/jboss/setup.cli
 ADD logging.properties /opt/jboss/wildfly/standalone/configuration/logging.properties
 
 ENV DOCKERIZE_VERSION v0.6.1
@@ -34,4 +35,4 @@ RUN curl -O -L https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 CMD ./dockerize -wait tcp://fluentd:24224 -wait tcp://elasticsearch:9200 -timeout 120s \
-    && /opt/jboss/wildfly/bin/standalone.sh -c standalone-docker.xml -b 0.0.0.0 -bmanagement 0.0.0.0
+    && /opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 -bmanagement 0.0.0.0

@@ -1,0 +1,5 @@
+embed-server
+/subsystem=logging/json-formatter=json:add(date-format="yyyy-MM-dd'T'HH:mm:ss.SSSXXX", key-overrides={"timestampe"="@timestamp"}, exception-output-type=formatted, meta-data={"@version"="1"})
+/subsystem=logging/console-handler=CONSOLE:write-attribute(name=named-formatter, value=json)
+/subsystem=undertow/server=default-server/host=default-host/setting=console-access-log:add(attributes={bytes-sent={}, date-time={key="@timestamp", date-format="yyyy-MM-dd'T'HH:mm:ss.SSSXXX"}, remote-host={}, remote-user={}, request-line={}, response-line={}}, metadata={"@version"="1"})
+stop-embedded-server
